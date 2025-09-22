@@ -6,7 +6,7 @@ import lombok.Data;
 public class ResponseDTO {
 
     private String msg_id;
-    private int timestamp;
+    private long timestamp;
     private String method;
     private String uri;
 

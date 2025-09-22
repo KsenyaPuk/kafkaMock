@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 
 @RestController
@@ -38,7 +35,6 @@ public class MainController {
         this.topic = topic;
     }
 
-
     @PostMapping(
             value = "/json/info/postBalances",
             produces = MediaType.APPLICATION_JSON_VALUE,
@@ -49,30 +45,27 @@ public class MainController {
         try {
             ResponseDTO responseDTO = new ResponseDTO();
 
-        String msg_id = requestDTO.getMsg_id();
-        responseDTO.setMsg_id(msg_id);
+            String msg_id = requestDTO.getMsg_id();
+            responseDTO.setMsg_id(msg_id);
 
-        long timestamp = System.currentTimeMillis();
+            long timestamp = System.currentTimeMillis();
+            responseDTO.setTimestamp(timestamp);
 
-        String method = request.getMethod();
-        String uri = request.getRequestURI();
+            String method = request.getMethod();
+            responseDTO.setMethod(method);
 
-        Map<String, Object> kafkaMessage = new LinkedHashMap<>();
-        kafkaMessage.put("msg_id", String.valueOf(requestDTO.getMsg_id()));
-        kafkaMessage.put("timestamp", String.valueOf(timestamp));
-        kafkaMessage.put("method", request.getMethod());
-        kafkaMessage.put("uri", request.getRequestURI());
+            String uri = request.getRequestURI();
+            responseDTO.setUri(uri);
 
-        String payload = mapper.writeValueAsString(kafkaMessage);
+            String kafkaMessage = mapper.writeValueAsString(responseDTO);
+            kafkaTemplate.send(topic, kafkaMessage);
 
-        // отправка в Kafka
-        kafkaTemplate.send(topic, payload);
 
-        log.info("Message sent to Kafka: {}", payload);
+            log.info("Message sent to Kafka: {}", kafkaMessage);
             log.error("*********** RequestDTO **********" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestDTO));
             log.error("*********** ResponseDTO **********" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseDTO));
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     } catch (Exception e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
