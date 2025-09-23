@@ -2,6 +2,7 @@ package com.example.kafkaMock.Kafka;
 
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,9 @@ public class KafkaTopicConfiguration {
     @Value(value = "${spring.kafka.bootstrap-servers}")
     private String bootstrapAddress;
 
+    @Value(value = "${spring.kafka.topic}")
+    private String topicName;
+
     @Bean
     public KafkaAdmin kafkaAdmin() {
         Map<String, Object> configs = new HashMap<>();
@@ -24,7 +28,7 @@ public class KafkaTopicConfiguration {
     }
 
     @Bean
-    public NewTopic topic1(String name, int numPartitions) {
-        return new NewTopic(name, numPartitions, (short) 1);
+    public NewTopic topic() {
+        return new NewTopic(topicName, 1, (short) 1);
     }
 }

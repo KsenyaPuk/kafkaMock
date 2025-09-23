@@ -45,7 +45,7 @@ public class MainController {
             ResponseDTO responseDTO = new ResponseDTO(msg_id, timestamp, method, uri);
 
             String kafkaMessage = mapper.writeValueAsString(responseDTO);
-            kafkaSender.sendMessage("test", kafkaMessage);
+            kafkaSender.sendMessage(kafkaMessage);
 
             log.info("Message sent to Kafka: {}", kafkaMessage);
             log.error("*********** RequestDTO **********" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestDTO));
