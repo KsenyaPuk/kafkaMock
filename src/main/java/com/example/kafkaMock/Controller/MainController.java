@@ -48,12 +48,13 @@ public class MainController {
             kafkaSender.sendMessage(kafkaMessage);
 
             log.info("Message sent to Kafka: {}", kafkaMessage);
-            log.error("*********** RequestDTO **********" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestDTO));
-            log.error("*********** ResponseDTO **********" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(responseDTO));
 
             return ResponseEntity.status(HttpStatus.OK).build();
     } catch (Exception e) {
-        return ResponseEntity.status(500).build();
+            log.error("*********** RequestDTO **********" + mapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestDTO));
+            log.error("ERROR:message " + e.getMessage());
+
+            return ResponseEntity.status(500).build();
         }
     }
 }
